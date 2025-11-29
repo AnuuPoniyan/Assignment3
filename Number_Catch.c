@@ -4,18 +4,16 @@
 #include <time.h>
 #include <windows.h>
 
-// quick color wrapper for windows CMD
 void color(int c) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), c);
 }
 
 int score = 0;
 int lives = 3;
-int timeLimit = 350;          // default speed (changes with difficulty)
+int timeLimit = 350;         
 int highScore = 0;
-int reverseMode = 0;          // 0 = normal, 1 = reverse mode
+int reverseMode = 0;        
 
-// load high score from file (if file doesn't exist, high score = 0)
 void loadHighScore() {
     FILE *f = fopen("highscore.txt", "r");
     if (f != NULL) {
@@ -26,7 +24,6 @@ void loadHighScore() {
     }
 }
 
-// save high score to file
 void saveHighScore() {
     if (score > highScore) {
         FILE *f = fopen("highscore.txt", "w");
@@ -37,12 +34,10 @@ void saveHighScore() {
     }
 }
 
-// returns a random number from 1 to 9
 int getRandomNumber() {
     return (rand() % 9) + 1;
 }
 
-// draws a small progress bar for the timer
 void showProgress(int t, int max) {
     int totalBars = 20;
     int filled = (t * totalBars) / max;
@@ -53,7 +48,6 @@ void showProgress(int t, int max) {
     printf("]");
 }
 
-// clears and prints game UI
 void drawUI(int num) {
     system("cls");
 
@@ -85,9 +79,6 @@ int main() {
     srand(time(NULL));
     loadHighScore();
 
-    // ================================
-    //          DIFFICULTY MENU
-    // ================================
     system("cls");
     printf("Select Difficulty:\n\n");
     printf("1. Easy\n");
@@ -100,10 +91,6 @@ int main() {
     else if (diff == '2') timeLimit = 350;
     else timeLimit = 250;
 
-
-    // ================================
-    //          MAIN MENU
-    // ================================
 menuStart:
     system("cls");
     printf("=== MAIN MENU ===\n\n");
@@ -153,14 +140,10 @@ menuStart:
         goto menuStart;
     }
 
-
-    // ================================
-    //         MAIN GAME LOOP
-    // ================================
     while (1) {
 
         num = getRandomNumber();
-        reverseMode = (rand() % 7 == 0); // small chance of reverse mode
+        reverseMode = (rand() % 7 == 0);
         timePassed = 0;
 
         while (1) {
@@ -171,7 +154,7 @@ menuStart:
             showProgress(timePassed, timeLimit);
             printf("\n\n(Press q to quit)\n");
 
-            // check input
+            
             if (kbhit()) {
                 key = getch();
 
@@ -184,7 +167,7 @@ menuStart:
 
                 int pressed = key - '0';
 
-                // ================= REVERSE MODE =================
+                
                 if (reverseMode) {
                     if (pressed != num) {
                         score++;
@@ -199,7 +182,7 @@ menuStart:
                     }
                 }
 
-                // ================= NORMAL MODE ==================
+                
                 else {
                     if (pressed == num) {
                         score++;
@@ -219,7 +202,7 @@ menuStart:
             Sleep(15);
             timePassed += 15;
 
-            // timeout
+            
             if (timePassed >= timeLimit) {
                 lives--;
                 color(12);
@@ -229,7 +212,7 @@ menuStart:
             }
         }
 
-        // difficulty adjustment
+        
         if (score % 5 == 0 && timeLimit > 120) {
             timeLimit -= 10;
         }
@@ -247,3 +230,4 @@ menuStart:
 
     return 0;
 }
+
